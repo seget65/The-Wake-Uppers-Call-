@@ -1,0 +1,228 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab560
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f0\fs26 \cf0 <!DOCTYPE html>\
+<html lang="en">\
+<head>\
+<meta charset="UTF-8">\
+<meta name="viewport" content="width=device-width, initial-scale=1.0">\
+<title>The Wake-Up Call</title>\
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">\
+<script src="https://cdn.tailwindcss.com"></script>\
+\
+<style>\
+    body \{\
+        font-family: 'Inter', sans-serif;\
+        background: #101827; /* dark navy console */\
+        display: flex;\
+        justify-content: center;\
+        padding: 2rem 1rem;\
+        color: white;\
+    \}\
+    .persona-tile \{\
+        background: #2b3345;\
+        color: #ffffff;\
+        border-radius: 15px;\
+        text-align: center;\
+        padding: 12px 4px;\
+        cursor: pointer;\
+        transition: 0.15s ease-out;\
+        border: 2px solid transparent;\
+    \}\
+    .persona-tile:hover \{\
+        transform: translateY(-2px);\
+        border-color: #facc15;\
+    \}\
+    .persona-tile input:checked + .persona-content \{\
+        border-color: #facc15;\
+        box-shadow: 0 0 10px #facc15aa;\
+        transform: scale(1.05);\
+    \}\
+</style>\
+</head>\
+\
+<body>\
+\
+<div class="w-full max-w-md space-y-6">\
+\
+    <div class="text-center">\
+        <h1 class="text-3xl font-black text-yellow-400">THE WAKE-UP CALL</h1>\
+        <p class="text-xs text-gray-400">Select your Extreme Motivator</p>\
+    </div>\
+\
+    <!-- TIME -->\
+    <div>\
+        <input type="time" id="alarmTime"\
+            class="w-full text-center text-3xl font-bold text-yellow-300 bg-[#0003] border border-gray-700 rounded-xl py-4">\
+    </div>\
+\
+    <!-- PERSONAS -->\
+    <div class="grid grid-cols-3 gap-3" id="personaGrid"></div>\
+\
+    <!-- ARM BUTTON -->\
+    <button id="armBtn"\
+        class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-3 rounded-xl">\
+        ARM WAKE-UP CALL\
+    </button>\
+\
+    <!-- STATUS -->\
+    <div class="text-center text-sm text-yellow-300 min-h-[20px]" id="status"></div>\
+    <div class="text-center text-xs text-gray-500" id="userId"></div>\
+    <p class="text-xs text-gray-400 text-center">\
+        Keep app OPEN for alarm audio. Locking/closing may silence playback.\
+    </p>\
+\
+    <!-- AUDIO + STOP -->\
+    <audio id="alarmAudio" loop class="hidden"></audio>\
+    <button id="stopBtn"\
+        class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 rounded-xl">\
+        STOP ALARM\
+    </button>\
+\
+</div>\
+\
+<script>\
+/* ===========================\
+   WAKE-UP CALL APP SCRIPT\
+   =========================== */\
+\
+document.getElementById("alarmTime").value = "07:00";\
+\
+const fallbackSound =\
+"https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"; // safe public alarm\
+\
+const personas = [\
+    \{\
+        key: "snarky_irish",\
+        label: "Snarky Irish",\
+        emoji: "\uc0\u55357 \u56840 ",\
+        quote: "\'93Up ye soft git.\'94"\
+    \},\
+    \{\
+        key: "chirpy_scottish",\
+        label: "Chirpy Scottish",\
+        emoji: "\uc0\u10024 ",\
+        quote: "\'93Don\'92t let winners beat ya.\'94"\
+    \},\
+    \{\
+        key: "hypochondriac",\
+        label: "Hypochondriac",\
+        emoji: "\uc0\u55358 \u56615 ",\
+        quote: "\'93This bed is full of germs!\'94"\
+    \},\
+    \{\
+        key: "drill_coach",\
+        label: "Drill Coach",\
+        emoji: "\uc0\u55357 \u56616 ",\
+        quote: "\'93MOVE. NOW.\'94"\
+    \},\
+    \{\
+        key: "overbearing_boss",\
+        label: "Overbearing Boss",\
+        emoji: "\uc0\u55357 \u56692 \u65039 ",\
+        quote: "\'93You\'92re late already.\'94"\
+    \},\
+    \{\
+        key: "analyst",\
+        label: "The Analyst",\
+        emoji: "\uc0\u55357 \u56522 ",\
+        quote: "\'93Efficiency is low\'85\'94"\
+    \},\
+    \{\
+        key: "ny_street",\
+        label: "NY Street",\
+        emoji: "\uc0\u55356 \u57305 \u65039 ",\
+        quote: "\'93Up. Hustle. Bread waits.\'94"\
+    \},\
+    \{\
+        key: "stoic",\
+        label: "Stoic Philosopher",\
+        emoji: "\uc0\u55356 \u57307 \u65039 ",\
+        quote: "\'93Stand. Choose virtue.\'94"\
+    \},\
+    \{\
+        key: "seductive_lover",\
+        label: "Seductive Lover",\
+        emoji: "\uc0\u55357 \u56459 ",\
+        quote: "\'93I reward the vertical\'85\'94"\
+    \}\
+];\
+\
+function renderPersonas() \{\
+    const grid = document.getElementById("personaGrid");\
+    grid.innerHTML = "";\
+    personas.forEach((p, i) => \{\
+        const id = "radio_" + p.key;\
+        grid.innerHTML += `\
+        <label class="persona-tile">\
+            <input type="radio" name="voice" value="$\{p.key\}" id="$\{id\}" class="hidden" $\{i === 0 ? 'checked' : ''\}>\
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">\
+                <div class="text-3xl">$\{p.emoji\}</div>\
+                <div class="font-bold text-xs mt-1">$\{p.label\}</div>\
+                <div class="text-[10px] italic text-gray-300">$\{p.quote\}</div>\
+            </div>\
+        </label>`;\
+    \});\
+\}\
+renderPersonas();\
+\
+/* Status + Stop */\
+const status = document.getElementById("status");\
+const stopBtn = document.getElementById("stopBtn");\
+const alarmAudio = document.getElementById("alarmAudio");\
+\
+/* Alarm Logic */\
+let checkInterval = null;\
+let isRinging = false;\
+\
+function armAlarm() \{\
+    const t = document.getElementById("alarmTime").value;\
+    status.textContent = `Armed for $\{t\}`;\
+    if (checkInterval) clearInterval(checkInterval);\
+\
+    checkInterval = setInterval(() => \{\
+        if (isRinging) return;\
+        const now = new Date();\
+        const nowTime = now.toTimeString().substring(0,5);\
+        if (nowTime === t) triggerAlarm();\
+    \}, 1000);\
+\}\
+\
+function triggerAlarm() \{\
+    isRinging = true;\
+    status.textContent = "WAKE UP! WAKE UP!";\
+    alarmAudio.src = fallbackSound;\
+    alarmAudio.loop = true;\
+    alarmAudio.classList.remove("hidden");\
+    stopBtn.classList.remove("hidden");\
+    alarmAudio.play().catch(() => \{\
+        status.textContent = "Tap PLAY on audio bar!";\
+    \});\
+\}\
+\
+function stopAlarm() \{\
+    isRinging = false;\
+    alarmAudio.pause()\
+    alarmAudio.classList.add("hidden");\
+    stopBtn.classList.add("hidden");\
+    status.textContent = "Alarm stopped.";\
+\}\
+\
+/* Buttons */\
+document.getElementById("armBtn").addEventListener("click", armAlarm);\
+stopBtn.addEventListener("click", stopAlarm);\
+\
+/* Fake User ID (until Firebase returns) */\
+document.getElementById("userId").textContent =\
+"User: DEMO-MODE-12345"; // can show real Firebase later\
+\
+</script>\
+\
+</body>\
+</html>\
+}
