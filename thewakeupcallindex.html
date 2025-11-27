@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wake-Up Call</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+    .persona-icon {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto;
+    }
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #101827;
+        display: flex;
+        justify-content: center;
+        padding: 1rem;
+        color: white;
+        min-height: 100vh;
+    }
+    .persona-tile {
+        background: #2b3345;
+        color: #ffffff;
+        border-radius: 12px;
+        text-align: center;
+        padding: 10px 4px;
+        cursor: pointer;
+        transition: 0.15s ease-out;
+        border: 2px solid transparent;
+        position: relative;
+    }
+    .persona-tile:hover {
+        transform: translateY(-2px);
+        border-color: #facc15;
+    }
+    .persona-tile input[type="radio"]:checked ~ .persona-content {
+        border-color: #facc15;
+        box-shadow: 0 0 10px #facc15aa;
+        transform: scale(1.05);
+    }
+    .upload-indicator {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #10b981;
+        border: 2px solid white;
+    }
+    .volume-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 4px;
+        border-radius: 5px;
+        background: #374151;
+        outline: none;
+    }
+    .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #facc15;
+        cursor: pointer;
+    }
+    .volume-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #facc15;
+        cursor: pointer;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal.active {
+        display: flex;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="w-full max-w-md space-y-3">
+
+    <div class="text-center">
+        <h1 class="text-2xl font-black text-yellow-400">THE WAKE-UP CALL</h1>
+        <p class="text-[10px] text-gray-400 mb-2">Select your Extreme Motivator</p>
+    </div>
+
+    <!-- TIME - PROMINENT -->
+    <div class="flex justify-center">
+        <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 px-6 py-3 rounded-xl shadow-lg inline-block">
+            <input type="time" id="alarmTime"
+                class="w-auto text-center text-4xl font-black text-gray-900 bg-transparent border-0 outline-none">
+        </div>
+    </div>
+
+    <!-- PERSONAS -->
+    <div class="grid grid-cols-3 gap-2" id="personaGrid">
+        <label class="persona-tile" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+            <input type="radio" name="voice" value="snarky_irish" checked class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FCD34D"/>
+                    <circle cx="35" cy="40" r="5" fill="#1F2937"/>
+                    <circle cx="65" cy="40" r="5" fill="#1F2937"/>
+                    <path d="M 30 70 Q 50 55 70 70" stroke="#1F2937" stroke-width="3" fill="none"/>
+                    <path d="M 25 35 L 35 30" stroke="#1F2937" stroke-width="3"/>
+                    <path d="M 75 35 L 65 30" stroke="#1F2937" stroke-width="3"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Snarky Irish</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"Up ye soft git."</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="snarky_irish"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);">
+            <input type="radio" name="voice" value="chirpy_scottish" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FCD34D"/>
+                    <circle cx="35" cy="40" r="5" fill="#1F2937"/>
+                    <circle cx="65" cy="40" r="5" fill="#1F2937"/>
+                    <path d="M 30 60 Q 50 75 70 60" stroke="#1F2937" stroke-width="3" fill="none"/>
+                    <path d="M 30 30 Q 35 25 40 30" stroke="#1F2937" stroke-width="2" fill="none"/>
+                    <path d="M 70 30 Q 65 25 60 30" stroke="#1F2937" stroke-width="2" fill="none"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Chirpy Scottish</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"Don't let winners beat ya."</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="chirpy_scottish"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+            <input type="radio" name="voice" value="hypochondriac" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#A7F3D0"/>
+                    <circle cx="35" cy="40" r="6" fill="#1F2937"/>
+                    <circle cx="65" cy="40" r="6" fill="#1F2937"/>
+                    <ellipse cx="35" cy="40" rx="8" ry="10" fill="none" stroke="#1F2937" stroke-width="2"/>
+                    <ellipse cx="65" cy="40" rx="8" ry="10" fill="none" stroke="#1F2937" stroke-width="2"/>
+                    <path d="M 35 65 Q 50 55 65 65" stroke="#1F2937" stroke-width="3" fill="none"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Hypochondriac</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"This bed is full of germs!"</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="hypochondriac"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+            <input type="radio" name="voice" value="drill_coach" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FCA5A5"/>
+                    <circle cx="35" cy="40" r="4" fill="#1F2937"/>
+                    <circle cx="65" cy="40" r="4" fill="#1F2937"/>
+                    <rect x="30" y="60" width="40" height="8" fill="#1F2937"/>
+                    <path d="M 20 35 L 35 35" stroke="#1F2937" stroke-width="4"/>
+                    <path d="M 65 35 L 80 35" stroke="#1F2937" stroke-width="4"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Drill Coach</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"MOVE. NOW."</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="drill_coach"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #475569 0%, #1e293b 100%);">
+            <input type="radio" name="voice" value="overbearing_boss" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#E5E7EB"/>
+                    <circle cx="35" cy="42" r="3" fill="#1F2937"/>
+                    <circle cx="65" cy="42" r="3" fill="#1F2937"/>
+                    <path d="M 25 32 L 45 35" stroke="#1F2937" stroke-width="3"/>
+                    <path d="M 75 32 L 55 35" stroke="#1F2937" stroke-width="3"/>
+                    <path d="M 35 65 L 65 65" stroke="#1F2937" stroke-width="3"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Overbearing Boss</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"You're late already."</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="overbearing_boss"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+            <input type="radio" name="voice" value="posh_larry" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FBBF24"/>
+                    <circle cx="40" cy="42" r="3" fill="#1F2937"/>
+                    <circle cx="40" cy="42" r="8" fill="none" stroke="#1F2937" stroke-width="2"/>
+                    <circle cx="65" cy="42" r="3" fill="#1F2937"/>
+                    <path d="M 40 60 Q 50 65 60 60" stroke="#1F2937" stroke-width="2" fill="none"/>
+                    <path d="M 30 28 Q 35 22 40 28" stroke="#1F2937" stroke-width="2" fill="none"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Posh Larry</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"Time to rise, darling."</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="posh_larry"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #eab308 0%, #a16207 100%);">
+            <input type="radio" name="voice" value="street_hustler" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#D4A574"/>
+                    <circle cx="38" cy="42" r="3" fill="#1F2937"/>
+                    <circle cx="62" cy="42" r="3" fill="#1F2937"/>
+                    <path d="M 35 60 L 50 63 L 65 60" stroke="#1F2937" stroke-width="3" fill="none"/>
+                    <path d="M 30 35 L 40 38" stroke="#1F2937" stroke-width="3"/>
+                    <path d="M 70 35 L 60 38" stroke="#1F2937" stroke-width="3"/>
+                    <rect x="35" y="20" width="30" height="8" fill="#1F2937"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Street Hustler</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"Ey, wake up capisce?"</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="street_hustler"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);">
+            <input type="radio" name="voice" value="angry_mum" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FECACA"/>
+                    <circle cx="35" cy="42" r="4" fill="#1F2937"/>
+                    <circle cx="65" cy="42" r="4" fill="#1F2937"/>
+                    <path d="M 30 65 L 70 65" stroke="#1F2937" stroke-width="3"/>
+                    <path d="M 25 38 L 35 32" stroke="#1F2937" stroke-width="3"/>
+                    <path d="M 75 38 L 65 32" stroke="#1F2937" stroke-width="3"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Angry Mum</div>
+                <div class="text-[7px] italic text-gray-200 leading-tight">"I won't ask again!"</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="angry_mum"></div>
+        </label>
+        <label class="persona-tile" style="background: linear-gradient(135deg, #fda4af 0%, #f472b6 100%);">
+            <input type="radio" name="voice" value="seductive_lover" class="hidden">
+            <div class="persona-content border-2 border-transparent rounded-xl p-1">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FDE68A"/>
+                    <path d="M 30 38 Q 35 35 40 38" stroke="#1F2937" stroke-width="2" fill="none"/>
+                    <path d="M 60 38 Q 65 35 70 38" stroke="#1F2937" stroke-width="2" fill="none"/>
+                    <circle cx="35" cy="42" r="3" fill="#1F2937"/>
+                    <circle cx="65" cy="42" r="3" fill="#1F2937"/>
+                    <path d="M 35 62 Q 50 70 65 62" stroke="#DC2626" stroke-width="3" fill="none"/>
+                </svg>
+                <div class="font-bold text-xs mt-0.5">Seductive Lover</div>
+                <div class="text-[7px] italic text-gray-900 leading-tight">"I reward the vertical…"</div>
+            </div>
+            <div class="upload-indicator hidden" data-persona="seductive_lover"></div>
+        </label>
+    </div>
+
+    <!-- VOLUME CONTROL - COMPACT -->
+    <div class="bg-[#2b3345] px-3 py-1.5 rounded-lg flex items-center gap-2">
+        <span class="text-[10px] text-gray-300">🔊</span>
+        <input type="range" min="0" max="100" value="70" class="volume-slider flex-1" id="volumeSlider">
+        <span class="text-[10px] text-yellow-400 font-bold w-8" id="volumeDisplay">70%</span>
+    </div>
+
+    <!-- BUTTONS IN 2x2 GRID -->
+    <div class="grid grid-cols-2 gap-2">
+        <button id="uploadVoicesBtn"
+            class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg text-xs">
+            🎤 UPLOAD<br>VOICES
+        </button>
+        <button id="testBtn"
+            class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg text-xs">
+            🎵 TEST<br>SOUND
+        </button>
+        <button id="armBtn"
+            class="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-3 rounded-lg text-xs col-span-2">
+            ⏰ ARM WAKE-UP CALL
+        </button>
+    </div>
+
+    <button id="disarmBtn"
+        class="hidden w-full bg-gray-600 hover:bg-gray-500 text-white font-extrabold py-2 rounded-lg text-xs">
+        DISARM ALARM
+    </button>
+
+    <!-- STOP & SNOOZE IN 2 COLUMN GRID -->
+    <div class="grid grid-cols-2 gap-2">
+        <button id="stopBtn" disabled
+            class="bg-red-600 text-white font-extrabold py-4 rounded-lg text-sm opacity-50 cursor-not-allowed">
+            🛑<br>STOP
+        </button>
+        <button id="snoozeBtn" disabled
+            class="bg-orange-500 text-white font-extrabold py-4 rounded-lg text-sm opacity-50 cursor-not-allowed">
+            😴<br>SNOOZE
+        </button>
+    </div>
+
+    <!-- STATUS -->
+    <div class="text-center text-xs text-yellow-300 min-h-[14px]" id="status"></div>
+
+    <p class="text-[9px] text-gray-500 text-center">
+        Keep app open for alarm audio. Locking may silence playback.
+    </p>
+
+    <!-- AUDIO -->
+    <audio id="alarmAudio" loop class="hidden"></audio>
+
+</div>
+
+<!-- UPLOAD MODAL -->
+<div id="uploadModal" class="modal">
+    <div class="bg-[#1f2937] rounded-xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-yellow-400">Upload Voice Files</h2>
+            <button id="closeModal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <p class="text-xs text-gray-400 mb-4">Upload MP3 or WAV files for each persona. Green dot = uploaded.</p>
+        
+        <div class="space-y-3" id="uploadList"></div>
+        
+        <button id="closeModalBtn" class="mt-4 w-full bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-2 rounded-xl">
+            Done
+        </button>
+    </div>
+</div>
+
+<script>
+document.getElementById("alarmTime").value = "07:00";
+
+const fallbackSound = "https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg";
+
+const personas = {
+    "snarky_irish": { label: "Snarky Irish", audioFile: null },
+    "chirpy_scottish": { label: "Chirpy Scottish", audioFile: null },
+    "hypochondriac": { label: "Hypochondriac", audioFile: null },
+    "drill_coach": { label: "Drill Coach", audioFile: null },
+    "overbearing_boss": { label: "Overbearing Boss", audioFile: null },
+    "posh_larry": { label: "Posh Larry", audioFile: null },
+    "street_hustler": { label: "Street Hustler", audioFile: null },
+    "angry_mum": { label: "Angry Mum", audioFile: null },
+    "seductive_lover": { label: "Seductive Lover", audioFile: null }
+};
+
+// Load saved audio from localStorage
+function loadSavedAudio() {
+    Object.keys(personas).forEach(key => {
+        const saved = localStorage.getItem(`voice_${key}`);
+        if (saved) {
+            personas[key].audioFile = saved;
+            updateUploadIndicator(key, true);
+        }
+    });
+}
+
+function updateUploadIndicator(personaKey, uploaded) {
+    const indicator = document.querySelector(`.upload-indicator[data-persona="${personaKey}"]`);
+    if (indicator) {
+        if (uploaded) {
+            indicator.classList.remove('hidden');
+        } else {
+            indicator.classList.add('hidden');
+        }
+    }
+}
+
+// Upload Modal
+const uploadModal = document.getElementById('uploadModal');
+const uploadVoicesBtn = document.getElementById('uploadVoicesBtn');
+const closeModal = document.getElementById('closeModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const uploadList = document.getElementById('uploadList');
+
+function renderUploadList() {
+    uploadList.innerHTML = '';
+    Object.keys(personas).forEach(key => {
+        const p = personas[key];
+        const hasAudio = p.audioFile !== null;
+        uploadList.innerHTML += `
+            <div class="bg-[#2b3345] p-3 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-bold">${p.label}</span>
+                    ${hasAudio ? '<span class="text-green-400 text-xs">✓ Uploaded</span>' : '<span class="text-gray-500 text-xs">No file</span>'}
+                </div>
+                <input type="file" accept="audio/*" data-persona="${key}" class="audio-upload text-xs text-gray-300 w-full">
+            </div>
+        `;
+    });
+    
+    document.querySelectorAll('.audio-upload').forEach(input => {
+        input.addEventListener('change', handleFileUpload);
+    });
+}
+
+function handleFileUpload(e) {
+    const file = e.target.files[0];
+    const personaKey = e.target.dataset.persona;
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const audioData = event.target.result;
+            personas[personaKey].audioFile = audioData;
+            localStorage.setItem(`voice_${personaKey}`, audioData);
+            updateUploadIndicator(personaKey, true);
+            renderUploadList();
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+uploadVoicesBtn.addEventListener('click', () => {
+    uploadModal.classList.add('active');
+    renderUploadList();
+});
+
+closeModal.addEventListener('click', () => {
+    uploadModal.classList.remove('active');
+});
+
+closeModalBtn.addEventListener('click', () => {
+    uploadModal.classList.remove('active');
+});
+
+// Elements
+const status = document.getElementById("status");
+const stopBtn = document.getElementById("stopBtn");
+const snoozeBtn = document.getElementById("snoozeBtn");
+const disarmBtn = document.getElementById("disarmBtn");
+const armBtn = document.getElementById("armBtn");
+const testBtn = document.getElementById("testBtn");
+const alarmAudio = document.getElementById("alarmAudio");
+const volumeSlider = document.getElementById("volumeSlider");
+const volumeDisplay = document.getElementById("volumeDisplay");
+
+// State
+let checkInterval = null;
+let isRinging = false;
+let isArmed = false;
+let armedTime = null;
+let vibrateInterval = null;
+
+// Volume control
+volumeSlider.addEventListener('input', (e) => {
+    const vol = e.target.value;
+    volumeDisplay.textContent = vol + '%';
+    alarmAudio.volume = vol / 100;
+});
+alarmAudio.volume = 0.7;
+
+// Test alarm sound
+testBtn.addEventListener('click', () => {
+    const persona = getSelectedPersona();
+    const personaObj = personas[persona];
+    alarmAudio.src = personaObj.audioFile || fallbackSound;
+    alarmAudio.loop = false;
+    alarmAudio.play().catch(err => {
+        status.textContent = "⚠️ Could not play audio";
+    });
+    status.textContent = `🎵 Testing ${personaObj.label}...`;
+    setTimeout(() => {
+        alarmAudio.pause();
+        alarmAudio.currentTime = 0;
+        status.textContent = "";
+    }, 3000);
+});
+
+function getSelectedPersona() {
+    const selected = document.querySelector('input[name="voice"]:checked');
+    return selected ? selected.value : "snarky_irish";
+}
+
+function armAlarm() {
+    const t = document.getElementById("alarmTime").value;
+    
+    if (!t) {
+        status.textContent = "⚠️ Please set a time!";
+        return;
+    }
+
+    const now = new Date();
+    const [hours, mins] = t.split(':');
+    const alarmDate = new Date();
+    alarmDate.setHours(parseInt(hours), parseInt(mins), 0, 0);
+    
+    if (alarmDate <= now) {
+        alarmDate.setDate(alarmDate.getDate() + 1);
+    }
+
+    if (checkInterval) {
+        clearInterval(checkInterval);
+        checkInterval = null;
+    }
+
+    isArmed = true;
+    armedTime = t;
+    const persona = getSelectedPersona();
+    const personaObj = personas[persona];
+    
+    status.textContent = `⏰ Armed for ${t} with ${personaObj.label}`;
+    armBtn.classList.add("hidden");
+    disarmBtn.classList.remove("hidden");
+    testBtn.disabled = true;
+    testBtn.classList.add("opacity-50");
+
+    if (navigator.vibrate) {
+        navigator.vibrate(200);
+    }
+
+    checkInterval = setInterval(() => {
+        if (isRinging || !isArmed) return;
+        
+        const currentTime = new Date();
+        const currentTimeStr = currentTime.toTimeString().substring(0,5);
+        
+        if (currentTimeStr === armedTime) {
+            triggerAlarm();
+        }
+    }, 1000);
+}
+
+function disarmAlarm() {
+    if (checkInterval) {
+        clearInterval(checkInterval);
+        checkInterval = null;
+    }
+    
+    isArmed = false;
+    armedTime = null;
+    status.textContent = "Alarm disarmed";
+    armBtn.classList.remove("hidden");
+    disarmBtn.classList.add("hidden");
+    testBtn.disabled = false;
+    testBtn.classList.remove("opacity-50");
+}
+
+function triggerAlarm() {
+    isRinging = true;
+    isArmed = false;
+    
+    if (checkInterval) {
+        clearInterval(checkInterval);
+        checkInterval = null;
+    }
+    
+    const persona = getSelectedPersona();
+    const personaObj = personas[persona];
+    
+    status.textContent = `🚨 WAKE UP! ${personaObj.label} is calling!`;
+    
+    alarmAudio.src = personaObj.audioFile || fallbackSound;
+    alarmAudio.loop = true;
+    alarmAudio.classList.remove("hidden");
+    disarmBtn.classList.add("hidden");
+    
+    // Enable the buttons
+    stopBtn.disabled = false;
+    snoozeBtn.disabled = false;
+    stopBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    stopBtn.classList.add("hover:bg-red-700");
+    snoozeBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    snoozeBtn.classList.add("hover:bg-orange-400");
+    
+    if (navigator.vibrate) {
+        vibrateInterval = setInterval(() => {
+            if (!isRinging) {
+                clearInterval(vibrateInterval);
+                return;
+            }
+            navigator.vibrate([500, 200, 500, 200, 500]);
+        }, 2000);
+    }
+    
+    alarmAudio.play().catch(err => {
+        console.error("Audio play failed:", err);
+        status.textContent = "⚠️ Tap PLAY on audio bar!";
+    });
+}
+
+function snoozeAlarm() {
+    isRinging = false;
+    alarmAudio.pause();
+    alarmAudio.currentTime = 0;
+    
+    // Disable buttons again
+    stopBtn.disabled = true;
+    snoozeBtn.disabled = true;
+    stopBtn.classList.add("opacity-50", "cursor-not-allowed");
+    stopBtn.classList.remove("hover:bg-red-700");
+    snoozeBtn.classList.add("opacity-50", "cursor-not-allowed");
+    snoozeBtn.classList.remove("hover:bg-orange-400");
+    
+    if (vibrateInterval) {
+        clearInterval(vibrateInterval);
+        vibrateInterval = null;
+    }
+    
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 5);
+    const snoozeTime = now.toTimeString().substring(0,5);
+    document.getElementById("alarmTime").value = snoozeTime;
+    
+    status.textContent = `😴 Snoozed until ${snoozeTime}`;
+    
+    setTimeout(() => {
+        armAlarm();
+    }, 500);
+}
+
+function stopAlarm() {
+    isRinging = false;
+    alarmAudio.pause();
+    alarmAudio.currentTime = 0;
+    alarmAudio.classList.add("hidden");
+    armBtn.classList.remove("hidden");
+    testBtn.disabled = false;
+    testBtn.classList.remove("opacity-50");
+    
+    // Disable buttons again
+    stopBtn.disabled = true;
+    snoozeBtn.disabled = true;
+    stopBtn.classList.add("opacity-50", "cursor-not-allowed");
+    stopBtn.classList.remove("hover:bg-red-700");
+    snoozeBtn.classList.add("opacity-50", "cursor-not-allowed");
+    snoozeBtn.classList.remove("hover:bg-orange-400");
+    
+    status.textContent = "Alarm stopped. Ready to set new alarm.";
+    
+    if (vibrateInterval) {
+        clearInterval(vibrateInterval);
+        vibrateInterval = null;
+    }
+}
+
+// Event Listeners
+armBtn.addEventListener("click", armAlarm);
+disarmBtn.addEventListener("click", disarmAlarm);
+stopBtn.addEventListener("click", stopAlarm);
+snoozeBtn.addEventListener("click", snoozeAlarm);
+
+// Initialize
+loadSavedAudio();
+
+// Page Visibility Warning
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && isArmed && !isRinging) {
+        console.warn("Tab hidden - alarm may not ring reliably!");
+    }
+});
+
+</script>
+
+</body>
+</html>
